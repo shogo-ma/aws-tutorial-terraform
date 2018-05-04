@@ -36,3 +36,30 @@ resource "aws_route_table_association" "public_r" {
     subnet_id = "${aws_subnet.public_subnet.id}"
     route_table_id = "${aws_route_table.rt.id}"
 }
+
+resource "aws_instance" "web_server" {
+    ami = "ami-ceafcba8"
+    instance_type = "t2.micro"
+    subnet_id = "${aws_subnet.public_subnet.id}"
+    associate_public_ip_address = true
+    security_groups = ["${aws_security_group.web_server_sg.id}"]
+    private_ip = "10.0.1.10"
+
+    tags {
+        Name = "Webサーバー"
+    }
+}
+
+resource "aws_security_group" "web_server_sg" {
+    vpc_id = "${aws_vpc.vpc_region.id}"
+    ingress {
+        from_port = 22
+        to_port = 22
+        protocol = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    tags {
+        Name = "WEB-SG"
+    }
+}
