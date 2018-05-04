@@ -57,6 +57,9 @@ resource "aws_route_table_association" "public_r" {
     route_table_id = "${aws_route_table.rt.id}"
 }
 
+resource "aws_route_table_association" "private_r" {
+}
+
 resource "aws_instance" "web_server" {
     ami = "ami-ceafcba8"
     instance_type = "t2.micro"
@@ -73,9 +76,15 @@ resource "aws_instance" "web_server" {
             private_key = "${file(var.ssh_key_file)}"
         }
         inline = [
-            "sudo yum install -y httpd",
+            "sudo yum install -y httpd php php-mysql php-mbstring",
             "sudo service httpd start",
-            "sudo chkconfig httpd on"
+            "sudo chkconfig httpd on",
+            "wget http://ja.wordpress.org/latest-ja.tar.gz",
+            "tar xvzf latest-ja.tar.gz",
+            "cd wordpress",
+            "sudo cp -r * /var/www/html/",
+            "sudo chown apache:apache /var/www/html/ -R",
+            "sudo service httpd restart"
         ]
     }
 
