@@ -15,3 +15,7 @@ resource "aws_subnet" "public_subnet" {
         Name = "パブリックサブネット"
     }
 }
+
+resource "aws_internet_gateway" "gateway" {
+    vpc_id = "${aws_vpc.vpc_region.id}"
+}
