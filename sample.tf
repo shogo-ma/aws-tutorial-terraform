@@ -75,6 +75,20 @@ resource "aws_instance" "web_server" {
     }
 }
 
+resource "aws_instance" "mysql_server" {
+    ami = "ami-ceafcba8"
+    instance_type = "t2.micro"
+    subnet_id = "${aws_subnet.private_subnet.id}"
+    associate_public_ip_address = false
+    security_groups = ["${aws_security_group.mysql_server_sg.id}"]
+    private_ip = "10.0.2.10"
+    key_name = "my-key"
+
+    tags {
+        Name = "DBサーバー"
+    }
+}
+
 resource "aws_security_group" "web_server_sg" {
     vpc_id = "${aws_vpc.vpc_region.id}"
 
@@ -101,5 +115,34 @@ resource "aws_security_group" "web_server_sg" {
 
     tags {
         Name = "WEB-SG"
+    }
+}
+
+resource "aws_security_group" "mysql_server_sg" {
+    vpc_id = "${aws_vpc.vpc_region.id}"
+
+    ingress {
+        from_port = 22
+        to_port = 22
+        protocol = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+    
+    ingress {
+        from_port = 3306
+        to_port = 3306
+        protocol = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    ingress {
+        from_port = 8
+        to_port = 0
+        protocol = "icmp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    tags {
+        Name = "DB-SG"
     }
 }
