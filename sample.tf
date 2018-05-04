@@ -6,3 +6,12 @@ resource "aws_vpc" "vpc_region" {
         Name = "VPC領域"
     }
 }
+
+resource "aws_subnet" "public_subnet" {
+    vpc_id = "${aws_vpc.vpc_region.id}"
+    cidr_block = "10.0.1.0/24"
+
+    tags {
+        Name = "パブリックサブネット"
+    }
+}
