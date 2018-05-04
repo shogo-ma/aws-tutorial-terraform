@@ -1,5 +1,6 @@
 variable "aws_access_key" {}
 variable "aws_secret_access_key" {}
+variable "ssh_key_file" {}
 
 provider "aws" {
     access_key = "${var.aws_access_key}"
