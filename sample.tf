@@ -43,6 +43,15 @@ resource "aws_route_table" "rt" {
     }
 }
 
+resource "aws_route_table" "prt" {
+    vpc_id = "${aws_vpc.vpc_region.id}"
+
+    route {
+        cidr_block = "0.0.0.0/0"
+        gateway_id = "${aws_nat_gateway.nat_gateway.id}"
+    }
+}
+
 resource "aws_route_table_association" "public_r" {
     subnet_id = "${aws_subnet.public_subnet.id}"
     route_table_id = "${aws_route_table.rt.id}"
@@ -145,4 +154,13 @@ resource "aws_security_group" "mysql_server_sg" {
     tags {
         Name = "DB-SG"
     }
+}
+
+resource "aws_eip" "eip" {
+    vpc = true
+}
+
+resource "aws_nat_gateway" "nat_gateway" {
+    allocation_id = "${aws_eip.eip.id}"
+    subnet_id = "${aws_subnet.public_subnet.id}"
 }
